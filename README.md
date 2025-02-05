@@ -5,7 +5,9 @@ This project explores data-driven football scouting using various machine learni
 The dataset was created by combining two public sources. And also scraped my own data from 2024-2025 season that I plan to update weekly.
 
 1️⃣ Football Player Stats (2022-2023 Season)📌 Source: Kaggle: 2022-2023 Football Player Stats📊 Includes: Player statistics (goals, assists, tackles, xG, etc.).
+
 2️⃣ Transfer Market Valuations📌 Source: Kaggle: Player Scores & Valuations📈 Includes: Player market values from Transfermarkt up to January 2025.
+
 3️⃣ Football Player stats (2024-2025 Season)📌 Source: Kaggle: Football Players Stats (2024-2025)
 
 Merged datasets to create a comprehensive dataset for football scouting & market predictions.
