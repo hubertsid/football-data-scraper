@@ -1,5 +1,5 @@
 # football-data-scouting
-This project explores data-driven football scouting using various machine learning and statistical methods. It includes a custom dataset, a Jupyter Notebook, and insights into scouting approaches such as weighted scoring models, clustering, and predictive machine learning models.
+This project explores data-driven football scouting using various machine learning and statistical methods. It includes a custom dataset, a Jupyter Notebook, insights into scouting approaches such as weighted scoring models, clustering, and my own custom datascraper for updating my 2024-2025 dataset.
 
 ## Dataset
 The dataset was created by combining two public sources. And also scraped my own data from 2024-2025 season that I plan to update weekly.
