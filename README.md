@@ -10,7 +10,9 @@ The dataset was created by combining two public sources. And also scraped my own
 
 3️⃣ Football Player stats (2024-2025 Season)📌 Source: Kaggle: Football Players Stats (2024-2025)
 
-Merged datasets to create a comprehensive dataset for football scouting & market predictions.
+Merged datasets to create a comprehensive dataset for football scouting & market predictions:
+
+
 
 ## Notebook
 The goal of this analysis is to explore different methods of data-driven scouting in football. The notebook consists of three key approaches:
@@ -32,3 +34,8 @@ Implements:
 Random Forest Regressor
 
 Evaluates results using MSE, MAE, and feature importance.
+
+📧 Contact & Contributions
+
+Feel free to reach out and give me your feedback!
+📬 Email: hubertxsidorowicz@gmail.com
