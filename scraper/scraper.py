@@ -27,7 +27,8 @@ URLS = {
 
 def authenticate_kaggle():
     """ Autoryzuje API Kaggle """
-
+    os.environ["KAGGLE_USERNAME"] = os.getenv("KAGGLE_USERNAME")
+    os.environ["KAGGLE_KEY"] = os.getenv("KAGGLE_KEY")
     print("✅ Kaggle API authentication successful!")
 
 def scrape_table(url, table_id):
@@ -106,5 +107,5 @@ def run_pipeline():
     df_light = df_cleaned[keep_columns]
     upload_dataset(df_cleaned, df_light)
 
-#authenticate_kaggle()
+authenticate_kaggle()
 run_pipeline()
