@@ -6,8 +6,8 @@ on:
   pull_request:
     branches: [ "main" ]
   schedule:
-    - cron: '0 12 * * 1'  # Cotygodniowa aktualizacja w poniedziałek o 12:00 UTC
-  workflow_dispatch:  # Możliwość ręcznego uruchomienia
+    - cron: '0 12 * * 1'  # Weekly update monday 12:00 UTC
+  workflow_dispatch:  # Maual activation
 
 permissions:
   contents: read
