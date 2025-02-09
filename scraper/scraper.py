@@ -27,9 +27,16 @@ URLS = {
 
 def authenticate_kaggle():
     """ Autoryzuje API Kaggle """
-    os.environ["KAGGLE_USERNAME"] = os.getenv("KAGGLE_USERNAME")
-    os.environ["KAGGLE_KEY"] = os.getenv("KAGGLE_KEY")
+    kaggle_username = os.getenv("KAGGLE_USERNAME")
+    kaggle_key = os.getenv("KAGGLE_KEY")
+
+    if not kaggle_username or not kaggle_key:
+        raise ValueError("❌ Brak KAGGLE_USERNAME lub KAGGLE_KEY w zmiennych środowiskowych!")
+
+    os.environ["KAGGLE_USERNAME"] = kaggle_username
+    os.environ["KAGGLE_KEY"] = kaggle_key
     print("✅ Kaggle API authentication successful!")
+
 
 def scrape_table(url, table_id):
     """ Pobiera tabelę z podanego URL """
