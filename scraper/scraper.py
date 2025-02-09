@@ -27,8 +27,7 @@ URLS = {
 
 def authenticate_kaggle():
     """ Autoryzuje API Kaggle """
-    os.environ["KAGGLE_USERNAME"] = "hubertsidorowicz"
-    os.environ["KAGGLE_KEY"] = "22b41901ec8bb16dffa1c7443e01062a"
+
     print("✅ Kaggle API authentication successful!")
 
 def scrape_table(url, table_id):
