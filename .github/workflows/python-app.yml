@@ -6,8 +6,8 @@ on:
   pull_request:
     branches: [ "main" ]
   schedule:
-    - cron: '0 12 * * 1'  # Cotygodniowa aktualizacja w poniedziałek o 12:00 UTC
-  workflow_dispatch:  # Możliwość ręcznego uruchomienia
+    - cron: '0 12 * * 1'  # Weekly update monday 12:00 UTC
+  workflow_dispatch:  # Maual activation
 
 permissions:
   contents: read
@@ -39,9 +39,8 @@ jobs:
     
     - name: Set Kaggle API credentials
       run: |
-        mkdir -p ~/.kaggle
-        echo "{\"username\":\"$KAGGLE_USERNAME\",\"key\":\"$KAGGLE_KEY\"}" > ~/.kaggle/kaggle.json
-        chmod 600 ~/.kaggle/kaggle.json
+        echo "KAGGLE_USERNAME=$KAGGLE_USERNAME" >> $GITHUB_ENV
+        echo "KAGGLE_KEY=$KAGGLE_KEY" >> $GITHUB_ENV
       env:
         KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
         KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
