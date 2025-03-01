@@ -11,7 +11,7 @@ Ensures up-to-date player data is available for further analysis or modeling.
 FBref
 
 ### Dataset Location
-[Football Players Stats (2024-2025)](https://www.kaggle.com/datasets/hubertsidorowicz/football-players-stats-2024-2025/data)] ]
+[Football Players Stats (2024-2025)](https://www.kaggle.com/datasets/hubertsidorowicz/football-players-stats-2024-2025/data)
 
 ### Technologies
 Python
