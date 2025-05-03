@@ -6,11 +6,11 @@ import time
 import random
 from kaggle.api.kaggle_api_extended import KaggleApi
 
-# 🔹 Konfiguracja Kaggle Dataset
+# Kaggle Credentials
 DATASET_NAME = "hubertsidorowicz/football-players-stats-2024-2025"
 UPLOAD_FOLDER = "kaggle_upload"
 
-# 🔹 URL-e do scrapowania
+# URL-e for scraping
 URLS = {
     'https://fbref.com/en/comps/Big5/stats/players/Big-5-European-Leagues-Stats': 'stats_standard',
     'https://fbref.com/en/comps/Big5/shooting/players/Big-5-European-Leagues-Stats': 'stats_shooting',
@@ -25,6 +25,7 @@ URLS = {
     'https://fbref.com/en/comps/Big5/keepersadv/players/Big-5-European-Leagues-Stats': 'stats_keeper_adv'
 }
 
+
 def authenticate_kaggle():
     """ Authenticates Kaggle API """
     kaggle_username = os.getenv("KAGGLE_USERNAME")
@@ -36,6 +37,7 @@ def authenticate_kaggle():
     os.environ["KAGGLE_USERNAME"] = kaggle_username
     os.environ["KAGGLE_KEY"] = kaggle_key
     print("✅ Kaggle API authentication successful!")
+
 
 def scrape_table(url, table_id):
     """ Retrieves a table from the given URL """
@@ -52,6 +54,7 @@ def scrape_table(url, table_id):
         print(f"❌ Error retrieving {table_id}: {e}")
         return None
 
+
 def scrape_all_tables():
     """ Retrieves all tables """
     dfs = {}
@@ -61,6 +64,7 @@ def scrape_all_tables():
             dfs[table_id] = df
         time.sleep(random.uniform(1, 2))
     return dfs
+
 
 def merge_dataframes(dfs):
     """ Merges retrieved tables """
@@ -72,9 +76,11 @@ def merge_dataframes(dfs):
             merged_df = merged_df.merge(df, on=['Player', 'Squad'], how='left', suffixes=('', f'_{name}'))
     return merged_df
 
+
 def remove_unwanted_columns(df):
     """ Removes columns containing 'matches' """
     return df.drop(columns=[col for col in df.columns if "matches" in col.lower()], errors='ignore')
+
 
 def fix_age_format(df):
     """
@@ -176,6 +182,7 @@ def upload_dataset(df_full, df_light):
     )
     print("✅ New dataset version with column descriptions has been published!")
 
+
 def run_pipeline():
     """ Runs the entire pipeline """
     print("🚀 Starting data scraping...")
@@ -189,6 +196,7 @@ def run_pipeline():
     ]
     df_light = df_cleaned_fixed_age[keep_columns]
     upload_dataset(df_cleaned_fixed_age, df_light)
+
 
 authenticate_kaggle()
 run_pipeline()
