@@ -32,11 +32,11 @@ def authenticate_kaggle():
     kaggle_key = os.getenv("KAGGLE_KEY")
 
     if not kaggle_username or not kaggle_key:
-        raise ValueError("❌ Missing KAGGLE_USERNAME or KAGGLE_KEY in environment variables!")
+        raise ValueError("Missing KAGGLE_USERNAME or KAGGLE_KEY in environment variables!")
 
     os.environ["KAGGLE_USERNAME"] = kaggle_username
     os.environ["KAGGLE_KEY"] = kaggle_key
-    print("✅ Kaggle API authentication successful!")
+    print("Kaggle API authentication successful!")
 
 
 def scrape_table(url, table_id):
@@ -48,10 +48,10 @@ def scrape_table(url, table_id):
         df = df.loc[:, ~df.columns.duplicated()]
         if 'Player' in df.columns:
             df = df[df['Player'] != 'Player']
-        print(f"✅ Retrieved: {table_id}")
+        print(f"Retrieved: {table_id}")
         return df
     except Exception as e:
-        print(f"❌ Error retrieving {table_id}: {e}")
+        print(f"Error retrieving {table_id}: {e}")
         return None
 
 
@@ -69,7 +69,7 @@ def scrape_all_tables():
 def merge_dataframes(dfs):
     """ Merges retrieved tables """
     if 'stats_standard' not in dfs:
-        raise ValueError("❌ Missing main table 'stats_standard'!")
+        raise ValueError("Missing main table 'stats_standard'!")
     merged_df = dfs['stats_standard']
     for name, df in dfs.items():
         if name != 'stats_standard':
@@ -91,8 +91,8 @@ def fix_age_format(df):
     - '19-032' -> '19'
     """
     if 'Age' in df.columns:
-        df['Age'] = df['Age'].astype(str).str.split('-').str[0]  # Keep only the year part
-        df['Age'] = pd.to_numeric(df['Age'], errors='coerce')  # Convert to numeric for consistency
+        df['Age'] = df['Age'].astype(str).str.split('-').str[0]
+        df['Age'] = pd.to_numeric(df['Age'], errors='coerce')
     return df
 
 
@@ -174,18 +174,18 @@ def upload_dataset(df_full, df_light):
     with open(metadata_path, "w") as f:
         json.dump(metadata, f, indent=4)
 
-    print("⬆️ Uploading new dataset version with column descriptions...")
+    print("Uploading new dataset version with column descriptions...")
     api.dataset_create_version(
         UPLOAD_FOLDER,
         version_notes="Updated statistics for the 2024/2025 season with column descriptions.",
         delete_old_versions=False
     )
-    print("✅ New dataset version with column descriptions has been published!")
+    print("New dataset version with column descriptions has been published!")
 
 
 def run_pipeline():
     """ Runs the entire pipeline """
-    print("🚀 Starting data scraping...")
+    print("Starting data scraping...")
     dfs = scrape_all_tables()
     merged_df = merge_dataframes(dfs)
     df_cleaned = remove_unwanted_columns(merged_df)
