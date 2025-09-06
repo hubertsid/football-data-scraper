@@ -7,7 +7,7 @@ import random
 from kaggle.api.kaggle_api_extended import KaggleApi
 
 # Kaggle Credentials
-DATASET_NAME = "hubertsidorowicz/football-players-stats-2024-2025"
+DATASET_NAME = "hubertsidorowicz/football-players-stats-2025-2026"
 UPLOAD_FOLDER = "kaggle_upload"
 
 # URL-e for scraping
@@ -103,8 +103,8 @@ def upload_dataset(df_full, df_light):
     
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-    full_path = os.path.join(UPLOAD_FOLDER, "players_data-2024_2025.csv")
-    light_path = os.path.join(UPLOAD_FOLDER, "players_data_light-2024_2025.csv")
+    full_path = os.path.join(UPLOAD_FOLDER, "players_data-2025_2026.csv")
+    light_path = os.path.join(UPLOAD_FOLDER, "players_data_light-2025_2026.csv")
 
     df_full.to_csv(full_path, index=False)
     df_light.to_csv(light_path, index=False)
@@ -154,17 +154,17 @@ def upload_dataset(df_full, df_light):
 
     # Creating metadata with column descriptions
     metadata = {
-        "title": "Football Players Stats 2024-2025",
+        "title": "Football Players Stats 2025-2026",
         "id": DATASET_NAME,
         "licenses": [{"name": "CC0-1.0"}],
         "columns": column_metadata,  # Column descriptions for Kaggle UI
         "files": [
             {
-                "name": "players_data-2024_2025.csv",
-                "description": "Complete dataset with all player statistics for the 2024-2025 season."
+                "name": "players_data-2025_2026.csv",
+                "description": "Complete dataset with all player statistics for the 2025-2026 season."
             },
             {
-                "name": "players_data_light-2024_2025.csv",
+                "name": "players_data_light-2025_2026.csv",
                 "description": "Lighter version of the dataset containing only key statistics."
             }
         ]
@@ -177,7 +177,7 @@ def upload_dataset(df_full, df_light):
     print("Uploading new dataset version with column descriptions...")
     api.dataset_create_version(
         UPLOAD_FOLDER,
-        version_notes="Updated statistics for the 2024/2025 season with column descriptions.",
+        version_notes="Updated statistics for the 2025/2026 season with column descriptions.",
         delete_old_versions=False
     )
     print("New dataset version with column descriptions has been published!")
