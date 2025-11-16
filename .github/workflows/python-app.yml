@@ -3,14 +3,9 @@ name: Update Kaggle Dataset
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
   schedule:
     - cron: '0 12 * * 1'
   workflow_dispatch:
-
-permissions:
-  contents: read
 
 jobs:
   build:
@@ -18,36 +13,34 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
       with:
         python-version: "3.10"
-    
-    - name: Install dependencies
+
+    - name: Install system dependencies for Playwright
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libnss3 libatk1.0-0 libcups2 libdrm2 libxkbcommon0 libasound2 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libpango-1.0-0 libpangocairo-1.0-0 libxshmfence1 libxfixes3 libxext6 libx11-6 libcairo2
+
+    - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install flake8 pytest pandas kaggle requests lxml html5lib playwright
-        if [ -f scraper/requirements.txt ]; then pip install -r scraper/requirements.txt; fi
+        pip install -r scraper/requirements.txt
 
-    - name: Install Playwright Browsers
+    - name: Install Playwright browsers
       run: |
         python -m playwright install chromium
-    
-    - name: Lint with flake8
-      run: |
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    
-    - name: Set environment variables (Kaggle + Headless)
-      run: |
-        echo "KAGGLE_USERNAME=$KAGGLE_USERNAME" >> $GITHUB_ENV
-        echo "KAGGLE_KEY=$KAGGLE_KEY" >> $GITHUB_ENV
-        echo "HEADLESS=$HEADLESS" >> $GITHUB_ENV
-      env:
-        KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
-        KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
-        HEADLESS: ${{ secrets.HEADLESS }}
 
-    - name: Run scraper script
+    - name: Set Kaggle API credentials
+      run: |
+        echo "KAGGLE_USERNAME=${{ secrets.KAGGLE_USERNAME }}" >> $GITHUB_ENV
+        echo "KAGGLE_KEY=${{ secrets.KAGGLE_KEY }}" >> $GITHUB_ENV
+
+    - name: Set headless mode
+      run: |
+        echo "HEADLESS=true" >> $GITHUB_ENV
+
+    - name: Run scraper
       run: python scraper/scraper.py
