@@ -31,7 +31,6 @@ def authenticate_kaggle():
     """ Authenticates Kaggle API """
     kaggle_username = os.getenv("KAGGLE_USERNAME")
     kaggle_key = os.getenv("KAGGLE_KEY")
-
     if not kaggle_username or not kaggle_key:
         raise ValueError("Missing KAGGLE_USERNAME or KAGGLE_KEY in environment variables!")
     
@@ -40,10 +39,8 @@ def authenticate_kaggle():
 def scrape_table(page, url, table_id):
     """Retrieves a table using a shared Playwright page"""
     try:
-        #print(f"Opening page: {url}")
         page.goto(url, timeout=0, wait_until="load")
 
-        #print(f"Waiting for table #{table_id} to load...")
         page.wait_for_selector(f"table#{table_id}", timeout=20000)
 
         html = page.content()
@@ -70,11 +67,29 @@ def scrape_all_tables():
     dfs = {}
 
     with sync_playwright() as p:
-        headless_mode = os.getenv("HEADLESS", "false").lower() == "true"
+        browser = p.chromium.launch(
+            headless=True,
+            args=[
+                "--disable-blink-features=AutomationControlled",
+                "--disable-dev-shm-usage",
+                "--disable-gpu",
+                "--no-sandbox",
+                "--no-zygote",
+                "--disable-infobars",
+                "--disable-web-security",
+                "--disable-features=IsolateOrigins,site-per-process",
+                "--window-size=1920,1080",
+            ]
+        )
 
-        browser = p.chromium.launch(headless=headless_mode)
-        page = browser.new_page()
+        page = browser.new_page(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0 Safari/537.36",
+            viewport={"width": 1920, "height": 1080}
+        )
 
+        page.add_init_script("""
+        Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+        """)
         for url, table_id in URLS.items():
             df = scrape_table(page, url, table_id)
             if df is not None:
