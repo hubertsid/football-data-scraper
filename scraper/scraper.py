@@ -1,10 +1,11 @@
 import os
 import json
-import shutil
 import pandas as pd
 import time
 import random
 from kaggle.api.kaggle_api_extended import KaggleApi
+from playwright.sync_api import sync_playwright
+from io import StringIO
 
 # Kaggle Credentials
 DATASET_NAME = "hubertsidorowicz/football-players-stats-2025-2026"
@@ -33,36 +34,55 @@ def authenticate_kaggle():
 
     if not kaggle_username or not kaggle_key:
         raise ValueError("Missing KAGGLE_USERNAME or KAGGLE_KEY in environment variables!")
-
-    os.environ["KAGGLE_USERNAME"] = kaggle_username
-    os.environ["KAGGLE_KEY"] = kaggle_key
+    
     print("Kaggle API authentication successful!")
 
-
-def scrape_table(url, table_id):
-    """ Retrieves a table from the given URL """
+def scrape_table(page, url, table_id):
+    """Retrieves a table using a shared Playwright page"""
     try:
-        df = pd.read_html(url, attrs={"id": table_id})[0]
+        #print(f"Opening page: {url}")
+        page.goto(url, timeout=0, wait_until="load")
+
+        #print(f"Waiting for table #{table_id} to load...")
+        page.wait_for_selector(f"table#{table_id}", timeout=20000)
+
+        html = page.content()
+
+        df = pd.read_html(StringIO(html), attrs={"id": table_id})[0]
+
         if isinstance(df.columns, pd.MultiIndex):
             df.columns = df.columns.droplevel(0)
+
         df = df.loc[:, ~df.columns.duplicated()]
-        if 'Player' in df.columns:
-            df = df[df['Player'] != 'Player']
+
+        if "Player" in df.columns:
+            df = df[df["Player"] != "Player"]
+
         print(f"Retrieved: {table_id}")
         return df
+
     except Exception as e:
         print(f"Error retrieving {table_id}: {e}")
         return None
-
-
+    
 def scrape_all_tables():
     """ Retrieves all tables """
     dfs = {}
-    for url, table_id in URLS.items():
-        df = scrape_table(url, table_id)
-        if df is not None:
-            dfs[table_id] = df
-        time.sleep(random.uniform(1, 2))
+
+    with sync_playwright() as p:
+        headless_mode = os.getenv("HEADLESS", "false").lower() == "true"
+
+        browser = p.chromium.launch(headless=headless_mode)
+        page = browser.new_page()
+
+        for url, table_id in URLS.items():
+            df = scrape_table(page, url, table_id)
+            if df is not None:
+                dfs[table_id] = df
+            time.sleep(random.uniform(1, 2))
+
+        browser.close()
+
     return dfs
 
 
