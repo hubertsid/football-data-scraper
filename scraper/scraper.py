@@ -36,31 +36,37 @@ def authenticate_kaggle():
     
     print("Kaggle API authentication successful!")
 
-def scrape_table(page, url, table_id):
-    """Retrieves a table using a shared Playwright page"""
-    try:
-        page.goto(url, timeout=0, wait_until="load")
+def scrape_table(page, url, table_id, retries=3):
+    for attempt in range(retries):
+        try:
+            print(f"Loading {table_id} (attempt {attempt+1})")
+            page.set_default_navigation_timeout(60000)
+            page.goto(url, wait_until="domcontentloaded", timeout=60000)
 
-        page.wait_for_selector(f"table#{table_id}", timeout=20000)
+            page.wait_for_selector(f"table#{table_id}", timeout=20000)
 
-        html = page.content()
 
-        df = pd.read_html(StringIO(html), attrs={"id": table_id})[0]
+            html = page.content()
+            df = pd.read_html(StringIO(html), attrs={"id": table_id})[0]
 
-        if isinstance(df.columns, pd.MultiIndex):
-            df.columns = df.columns.droplevel(0)
+            if isinstance(df.columns, pd.MultiIndex):
+                df.columns = df.columns.droplevel(0)
 
-        df = df.loc[:, ~df.columns.duplicated()]
+            df = df.loc[:, ~df.columns.duplicated()]
+            if "Player" in df.columns:
+                df = df[df["Player"] != "Player"]
 
-        if "Player" in df.columns:
-            df = df[df["Player"] != "Player"]
+            print(f"Retrieved: {table_id}")
+            return df
 
-        print(f"Retrieved: {table_id}")
-        return df
+        except Exception as e:
+            print(f"[ERROR] {table_id}: {e}")
+            if attempt == retries - 1:
+                print(f"[FAILED] Could not scrape {table_id} after {retries} attempts.")
+                return None
+            time.sleep(3)
+            continue
 
-    except Exception as e:
-        print(f"Error retrieving {table_id}: {e}")
-        return None
     
 def scrape_all_tables():
     """ Retrieves all tables """
@@ -75,10 +81,6 @@ def scrape_all_tables():
                 "--disable-gpu",
                 "--no-sandbox",
                 "--no-zygote",
-                "--disable-infobars",
-                "--disable-web-security",
-                "--disable-features=IsolateOrigins,site-per-process",
-                "--window-size=1920,1080",
             ]
         )
 
