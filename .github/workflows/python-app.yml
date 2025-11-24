@@ -20,14 +20,28 @@ jobs:
       with:
         python-version: "3.10"
 
-    - name: Install system dependencies (Playwright needs these)
+    - name: Install system dependencies (Playwright)
       run: |
         sudo apt-get update
         sudo apt-get install -y \
-          libnss3 libnss3-dev libatk1.0-0 libatk-bridge2.0-0 \
-          libcups2 libxkbcommon0 libxdamage1 libxcomposite1 libxrandr2 \
-          libasound2 libpangocairo-1.0-0 libcairo2 libatspi2.0-0 \
-          libgtk-3-0 libgbm1 xvfb
+          libatk1.0-0 \
+          libatk-bridge2.0-0 \
+          libcups2t64 \
+          libnspr4 \
+          libnss3 \
+          libxkbcommon0 \
+          libxdamage1 \
+          libxcomposite1 \
+          libxrandr2 \
+          libasound2t64 \
+          libpangocairo-1.0-0 \
+          libcairo2 \
+          libatspi2.0-0 \
+          libgtk-3-0 \
+          libgbm1 \
+          libxshmfence1 \
+          libx11-xcb1 \
+          xvfb
 
     - name: Install Python deps
       run: |
